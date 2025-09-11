@@ -28,14 +28,14 @@ Descripción por servicio
 ##1. Jupyter Notebook
 
 yaml
-
+```
 image: jupyter/pyspark-notebook
 ports: "8888:8888"
 volumes: ./work:/home/jovyan/work
 environment:
   - GRANT_SUDO=yes
   - JUPYTER_ENABLE_LAB=yes
-
+```
 
 Entorno interactivo para desarrollo en PySpark. 
 Expone el puerto 8888 para acceso web. 
@@ -47,7 +47,7 @@ Habilita JupyterLab y permisos sudo para el usuario jovyan.
 ##2. PostgreSQL
 
 yaml
-
+```
 image: postgres:latest
 container_name: postgresdb_cachoza
 environment:
@@ -55,14 +55,16 @@ environment:
   POSTGRES_PASSWORD: cachoza_password
   POSTGRES_DB: psqldbSpark
 ports: "5432:5432"
-
+```
 
 Base de datos relacional para persistencia o análisis.
 Usuario inicial: cachoza_user, base de datos: psqldbSpark. 
 Expone el puerto 5432 para conexión desde Spark o Jupyter.
 
 ##3. Spark Master
+
 yaml
+```
 image: bitnami/spark:3.5.0
 container_name: spark-master
 command: ["/opt/bitnami/scripts/spark/run.sh"]
@@ -70,6 +72,7 @@ environment:
   - SPARK_MODE=master
 ports: "7077", "8080"
 volumes: ./jars:/opt/spark/jars
+```
 
 
 Nodo central del clúster Spark. 
@@ -78,13 +81,17 @@ Puerto 8080: interfaz web del master.
 Monta ./jars para bibliotecas compartidas. los drivers de mysql o postgresql  
 
 ##4. Spark Workers (1, 2 y 3)
+
 Cada uno tiene:
 
 yaml
+
+```
 SPARK_MODE=worker
 SPARK_MASTER_URL=spark://spark-master:7077
 SPARK_WORKER_MEMORY=2g
 SPARK_WORKER_CORES=2
+```
 
 Se conectan al master vía spark://spark-master:7077. 
 Cada worker tiene 2 GB de RAM y 2 núcleos asignados. 
