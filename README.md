@@ -1,4 +1,4 @@
-Para una aplicacion de spark en windows sobre Docker "docker-compose "
+##Para una aplicacion de spark en windows sobre Docker "docker-compose "
 
 
 
@@ -6,10 +6,12 @@ el archivo docker-compose.yml o yaml tambien puede ser no da la
 instalacion para probar los notebooks de jupyter y ver los tiempos de respuestas 
 la dbs que desea analizar y entre otros.  
 
-en resumidas cuentas es un docker compose up --build -d y el docker-compose down tienen las versiones de los entornosc como un txt que como nombre es la version de spark 
+en resumidas cuentas es un docker compose up --build -d y el docker-compose down 
 
+tienen las versiones de los entornosc como un txt que como nombre es la version de spark
 
 Arquitectura general
+
 Red compartida: spark-network conecta todos los contenedores.
 
 Persistencia: Volúmenes locales para Jupyter (./work) y Spark (./jars).
@@ -17,21 +19,23 @@ Persistencia: Volúmenes locales para Jupyter (./work) y Spark (./jars).
 Servicios:
 
 Jupyter Notebook con PySpark
-
 PostgreSQL como base de datos
-
 Spark Master + 3 Spark Workers
 
 
 Descripción por servicio
-1. Jupyter Notebook
+
+##1. Jupyter Notebook
+
 yaml
+
 image: jupyter/pyspark-notebook
 ports: "8888:8888"
 volumes: ./work:/home/jovyan/work
 environment:
   - GRANT_SUDO=yes
   - JUPYTER_ENABLE_LAB=yes
+
 
 Entorno interactivo para desarrollo en PySpark. 
 Expone el puerto 8888 para acceso web. 
@@ -40,8 +44,10 @@ Habilita JupyterLab y permisos sudo para el usuario jovyan.
 
 
 
-2. PostgreSQL
+##2. PostgreSQL
+
 yaml
+
 image: postgres:latest
 container_name: postgresdb_cachoza
 environment:
@@ -55,7 +61,7 @@ Base de datos relacional para persistencia o análisis.
 Usuario inicial: cachoza_user, base de datos: psqldbSpark. 
 Expone el puerto 5432 para conexión desde Spark o Jupyter.
 
-3. Spark Master
+##3. Spark Master
 yaml
 image: bitnami/spark:3.5.0
 container_name: spark-master
@@ -71,7 +77,7 @@ Puerto 7077: comunicación con workers.
 Puerto 8080: interfaz web del master.
 Monta ./jars para bibliotecas compartidas. los drivers de mysql o postgresql  
 
-4. Spark Workers (1, 2 y 3)
+##4. Spark Workers (1, 2 y 3)
 Cada uno tiene:
 
 yaml
