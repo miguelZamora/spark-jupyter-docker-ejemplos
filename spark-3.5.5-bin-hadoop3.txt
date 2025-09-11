@@ -1,0 +1,10 @@
+esta es la version de spark-3.5.5-bin-hadoop3
+
+
+deberia poder descargar la version de spark-3.5.5-bin-hadoop3 [^1].
+
+A footnote can also have multiple lines[^2].
+
+[^1]: url ref https://archive.apache.org/dist/spark/spark-3.5.5/ .- [x] #1
+[^2]: To add line breaks within a footnote, prefix new lines with 2 spaces.
+  This is a second line.
