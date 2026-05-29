@@ -1,0 +1,14 @@
+# En tu terminal, en el directorio del proyecto
+echo "numpy==1.26.4"
+pandas==2.2.3
+tensorflow==2.15.1
+opencv-contrib-python==4.9.0.80
+seaborn==0.13.2
+scikit-learn==1.5.0
+matplotlib==3.8.4
+plotly==5.24.0
+jupyterhub==4.1.6
+dockerspawner==13.0.0
+psycopg2-binary==2.9.9
+jupyterlab==4.0.0
+findspark==2.0.1" > requirements.txt

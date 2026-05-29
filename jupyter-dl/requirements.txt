@@ -1,0 +1,13 @@
+
+numpy==1.24.4
+pandas==2.2.3
+opencv-contrib-python==4.9.0.80
+seaborn==0.13.2
+scikit-learn==1.5.0
+matplotlib==3.8.4
+plotly==5.24.0
+jupyterlab==4.0.7
+dockerspawner==13.0.0
+psycopg2-binary==2.9.9
+findspark==2.0.1
+notebook==7.0.6
