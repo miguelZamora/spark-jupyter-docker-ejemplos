@@ -1,4 +1,4 @@
-#version: '3'
+#version: '3.8'
 services:
   jupyterhub:
     build:
@@ -19,8 +19,10 @@ services:
     deploy:
       resources:
         limits:
+          memory: 4g    # subimos a 4 GB
+        reservations:
           memory: 2g
-  
+
   postgres:
     image: postgres:latest
     container_name: postgresdb_cachoza
@@ -35,6 +37,8 @@ services:
     deploy: 
       resources: 
         limits: 
+          memory: 2g    # subimos a 2 GB
+        reservations:
           memory: 1g      
 
   spark-master:
@@ -48,6 +52,12 @@ services:
       - "8080:8080"
     networks:
       - spark-network
+    deploy:
+      resources:
+        limits:
+          memory: 2g    # 2 GB para el master
+        reservations:
+          memory: 1g
 
   spark-worker-1:
     image: apache/spark:3.5.1
@@ -59,15 +69,16 @@ services:
       - SPARK_NO_DAEMONIZE=true
     networks:
       - spark-network
+    deploy:
+      resources:
+        limits:
+          memory: 2g    # 2 GB para el worker
+        reservations:
+          memory: 1g
 
-
-        
 networks:
   spark-network:
     driver: bridge
-
-
-
 
 
 # #version: '3'

@@ -1,0 +1,163 @@
+#version: '3'
+services:
+  # jupyter:
+  #   build: ./jupyter-stable
+  #   container_name: jupyter-stable
+  #   ports:
+  #     - "8888:8888"
+  #   volumes:
+  #     - ./work:/home/jovyan/work
+  #   environment:
+  #     - GRANT_SUDO=yes
+  #     - JUPYTER_ENABLE_LAB=yes
+  #   networks:
+  #     - spark-network
+  #   deploy: 
+  #     resources: 
+  #       limits: 
+  #         memory: 1g
+
+  # jupyter-dl:
+  #   build: ./jupyter-dl
+  #   container_name: jupyter-dl
+  #   ports:
+  #     - "8890:8888"
+  #   volumes:
+  #     - ./work:/home/jovyan/work
+  #     - ./work/jupyter_notebook_config.py:/home/jovyan/.jupyter/jupyter_notebook_config.py
+  #   environment:
+  #     - GRANT_SUDO=yes
+  #     - JUPYTER_ENABLE_LAB=yes
+  #   networks:
+  #     - spark-network
+  #   deploy: 
+  #     resources: 
+  #       limits: 
+  #         memory: 1g
+
+  jupyterhub:
+    image: jupyterhub/jupyterhub:latest
+    container_name: jupyterhub
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./jupyterhub/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
+      - ./work:/home/jupyterhub/work
+    networks:
+      - spark-network
+    environment:
+      - JUPYTERHUB_CRYPT_KEY=supersecretkey
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  # tf-serving:
+  #   image: tensorflow/serving:latest
+  #   container_name: tf-serving
+  #   ports:
+  #     - "8500:8500"   # gRPC
+  #     - "8501:8501"   # REST
+  #   environment:
+  #     - MODEL_NAME=mimodelo
+  #   volumes:
+  #     - ./models/mimodelo:/models/mimodelo
+  #   networks:
+  #     - spark-network
+  #   deploy: 
+  #     resources: 
+  #       limits: 
+  #         memory: 2g
+
+  
+  postgres:
+    image: postgres:latest
+    container_name: postgresdb_cachoza
+    environment:
+      POSTGRES_USER: cachoza_user
+      POSTGRES_PASSWORD: cachoza_password
+      POSTGRES_DB: psqldbSpark
+    ports:
+      - "5432:5432"
+    networks:
+      - spark-network
+    deploy: 
+      resources: 
+        limits: 
+          memory: 1g      
+
+  spark-master:
+    image: bitnami/spark:3.5.0
+    container_name: spark-master
+    command: ["/opt/bitnami/scripts/spark/run.sh"]
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    networks:
+      - spark-network
+    volumes:
+      - ./jars:/opt/spark/jars
+    deploy: 
+      resources: 
+        limits: 
+          memory: 2g      
+
+  spark-worker-1:
+    image: bitnami/spark:3.5.0
+    container_name: spark-worker-1
+    command: ["/opt/bitnami/scripts/spark/run.sh"]
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_WORKER_CORES=2
+    networks:
+      - spark-network
+    volumes:
+      - ./jars:/opt/spark/jars
+    deploy: 
+      resources: 
+        limits: 
+          memory: 2g
+
+  spark-worker-2:
+    image: bitnami/spark:3.5.0
+    container_name: spark-worker-2
+    command: ["/opt/bitnami/scripts/spark/run.sh"]
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_WORKER_CORES=2
+    networks:
+      - spark-network
+    volumes:
+      - ./jars:/opt/spark/jars  
+    deploy: 
+      resources: 
+        limits: 
+          memory: 2g
+
+  # spark-worker-3:
+  #   image: bitnami/spark:3.5.0
+  #   container_name: spark-worker-3
+  #   command: ["/opt/bitnami/scripts/spark/run.sh"]
+  #   environment:
+  #     - SPARK_MODE=worker
+  #     - SPARK_MASTER_URL=spark://spark-master:7077
+  #     - SPARK_WORKER_MEMORY=2g
+  #     - SPARK_WORKER_CORES=2
+  #   networks:
+  #     - spark-network
+  #   volumes:
+  #     - ./jars:/opt/spark/jars  
+  #   deploy: 
+  #     resources: 
+  #       limits: 
+  #         memory: 1g
+          
+networks:
+  spark-network:
+    driver: bridge
